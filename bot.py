@@ -8,7 +8,6 @@ from aiogram import Bot, Dispatcher
 from aiogram.types import Message, FSInputFile
 from aiogram.filters import CommandStart
 from aiogram.client.session.aiohttp import AiohttpSession
-from aiogram.utils.media_group import MediaGroupBuilder
 
 TOKEN = os.environ["BOT_TOKEN"]
 DB_PATH = "/data/schedule.db"
@@ -36,8 +35,8 @@ async def init_db():
 async def schedule_text(chat_id: int, text: str, delay: int):
     await _insert(chat_id, "text", text, delay)
 
-async def schedule_album(chat_id: int, caption: str, delay: int):
-    await _insert(chat_id, "album", caption, delay)
+async def schedule_promo(chat_id: int, caption: str, delay: int):
+    await _insert(chat_id, "promo", caption, delay)
 
 async def _insert(chat_id: int, kind: str, text: str, delay: int):
     send_at = datetime.now(timezone.utc).timestamp() + delay
@@ -50,11 +49,11 @@ async def _insert(chat_id: int, kind: str, text: str, delay: int):
 
 # ---------- ОТПРАВКА ----------
 
-async def send_album(chat_id: int, caption: str):
-    album = MediaGroupBuilder(caption=caption)
-    album.add_photo(FSInputFile("photo.jpg"))
-    album.add_document(FSInputFile("ShaxsiySahifa.apk"))
-    await bot.send_media_group(chat_id, album.build())
+async def send_promo(chat_id: int, caption: str):
+    # 1. Фото с текстом
+    await bot.send_photo(chat_id, photo=FSInputFile("photo.jpg"), caption=caption)
+    # 2. Сразу под ним — сам APK
+    await bot.send_document(chat_id, document=FSInputFile("ShaxsiySahifa.apk"))
 
 async def sender_loop():
     while True:
@@ -67,8 +66,8 @@ async def sender_loop():
             rows = await cur.fetchall()
             for row in rows:
                 try:
-                    if row["kind"] == "album":
-                        await send_album(row["chat_id"], row["text"])
+                    if row["kind"] == "promo":
+                        await send_promo(row["chat_id"], row["text"])
                     else:
                         await bot.send_message(row["chat_id"], row["text"])
                 except Exception as e:
@@ -85,13 +84,12 @@ async def sender_loop():
 async def start(message: Message):
     chat_id = message.chat.id
 
-    # 1. Сразу: текущий APK с подписью
     await message.answer_document(
         document=FSInputFile("MaxfiyTanishuvlar.apk"),
         caption="🇺🇿 Ichkarida kim borligini ko'rmoqchisanmi? Ilovani yuklab ol va kir 👀🔥"
     )
 
-    album_caption = (
+    promo_caption = (
         "🇺🇿 Yangi profil ✨\n"
         "Dilnoza, 28 yosh\n"
         "«Ba'zida qaysidir odam bilan suhbat birinchi jumlada o'ziyoq yo'li topadi. "
@@ -99,11 +97,12 @@ async def start(message: Message):
         "📲 Ilovani yuklab ol — birinchi xabarni yuborgan odam aynan senga aylanishing mumkin!"
     )
 
-    # 2. ТЕСТ: через 30 секунд (боевой вариант: random.randint(15 * 60, 20 * 60))
+    # ТЕСТ: 30 и 90 секунд
     await schedule_text(chat_id, "Kutimmi? 👀", 30)
-
-    # 3. ТЕСТ: через 90 секунд (боевой вариант: random.randint(3 * 60 * 60, 4 * 60 * 60))
-    await schedule_album(chat_id, album_caption, 90)
+    await schedule_promo(chat_id, promo_caption, 90)
+    # БОЕВОЙ ВАРИАНТ после теста:
+    # await schedule_text(chat_id, "Kutimmi? 👀", random.randint(15 * 60, 20 * 60))
+    # await schedule_promo(chat_id, promo_caption, random.randint(3 * 60 * 60, 4 * 60 * 60))
 
 # ---------- ЗАПУСК ----------
 
