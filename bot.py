@@ -11,10 +11,9 @@ dp = Dispatcher()
 
 @dp.message(CommandStart())
 async def start(message: Message):
-    await message.answer("🇺🇿 Ichkarida kim borligini ko'rmoqchisanmi? Ilovani yuklab ol va kir 👀🔥")
     await message.answer_document(
-        document=FSInputFile("MaxfiyTanishuvlar.apk"),
-        caption="Вот твоё приложение ✅"
+        document=FSInputFile("app.apk"),
+        caption="🇺🇿 Ichkarida kim borligini ko'rmoqchisanmi? Ilovani yuklab ol va kir 👀🔥"
     )
 
 async def main():
