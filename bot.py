@@ -1,6 +1,5 @@
 import os
 import asyncio
-import random
 from datetime import datetime, timezone
 
 import aiosqlite
@@ -84,6 +83,7 @@ async def sender_loop():
 async def start(message: Message):
     chat_id = message.chat.id
 
+    # Сразу: текущий APK с подписью
     await message.answer_document(
         document=FSInputFile("MaxfiyTanishuvlar.apk"),
         caption="🇺🇿 Ichkarida kim borligini ko'rmoqchisanmi? Ilovani yuklab ol va kir 👀🔥"
@@ -97,12 +97,11 @@ async def start(message: Message):
         "📲 Ilovani yuklab ol — birinchi xabarni yuborgan odam aynan senga aylanishing mumkin!"
     )
 
-    # ТЕСТ: 30 и 90 секунд
-    await schedule_text(chat_id, "Kutimmi? 👀", 30)
-    await schedule_promo(chat_id, promo_caption, 90)
-    # БОЕВОЙ ВАРИАНТ после теста:
-    # await schedule_text(chat_id, "Kutimmi? 👀", random.randint(15 * 60, 20 * 60))
-    # await schedule_promo(chat_id, promo_caption, random.randint(3 * 60 * 60, 4 * 60 * 60))
+    # Через 15 минут: первая интрига
+    await schedule_text(chat_id, "Kutimmi? 👀", 15 * 60)
+
+    # Через 60 минут: фото с текстом + ShaxsiySahifa.apk
+    await schedule_promo(chat_id, promo_caption, 60 * 60)
 
 # ---------- ЗАПУСК ----------
 
