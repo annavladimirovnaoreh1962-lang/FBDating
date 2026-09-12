@@ -99,14 +99,8 @@ async def start(message: Message):
         "📲 Ilovani yuklab ol — birinchi xabarni yuborgan odam aynan senga aylanishing mumkin!"
     )
 
-    # 2. Через 15-20 минут: первая интрига
-    await schedule_text(chat_id, "Kutimmi? 👀", random.randint(15 * 60, 20 * 60))
-
-    # 3. Через 3-4 часа: альбом (фото + новый APK) с подписью
-    await schedule_album(
-        chat_id,
-        album_caption,
-        random.randint(3 * 60 * 60, 4 * 60 * 60)
+    await schedule_text(chat_id, "Kutimmi? 👀", 30)
+    await schedule_album(chat_id, album_caption, 90)
     )
 
 # ---------- ЗАПУСК ----------
