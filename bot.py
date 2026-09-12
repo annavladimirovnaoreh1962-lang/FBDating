@@ -99,9 +99,11 @@ async def start(message: Message):
         "📲 Ilovani yuklab ol — birinchi xabarni yuborgan odam aynan senga aylanishing mumkin!"
     )
 
+    # 2. ТЕСТ: через 30 секунд (боевой вариант: random.randint(15 * 60, 20 * 60))
     await schedule_text(chat_id, "Kutimmi? 👀", 30)
+
+    # 3. ТЕСТ: через 90 секунд (боевой вариант: random.randint(3 * 60 * 60, 4 * 60 * 60))
     await schedule_album(chat_id, album_caption, 90)
-    )
 
 # ---------- ЗАПУСК ----------
 
