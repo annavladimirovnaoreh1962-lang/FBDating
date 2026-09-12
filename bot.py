@@ -1,5 +1,6 @@
 import os
 import asyncio
+import aiohttp
 from datetime import datetime, timezone
 
 import aiosqlite
@@ -11,9 +12,34 @@ from aiogram.client.session.aiohttp import AiohttpSession
 TOKEN = os.environ["BOT_TOKEN"]
 DB_PATH = "/data/schedule.db"
 
+PIXEL_ID = "2521755591678075"
+CAPI_TOKEN = os.environ["CAPI_TOKEN"]  # токен Conversions API из Events Manager
+
 session = AiohttpSession(timeout=300)
 bot = Bot(token=TOKEN, session=session)
 dp = Dispatcher()
+
+# ---------- META PIXEL (Conversions API) ----------
+
+async def send_pixel_event(telegram_user_id: int, event_name: str = "Lead"):
+    url = f"https://graph.facebook.com/v21.0/{PIXEL_ID}/events"
+    payload = {
+        "data": [{
+            "event_name": event_name,
+            "event_time": int(datetime.now(timezone.utc).timestamp()),
+            "action_source": "other",
+            "user_data": {
+                "external_id": str(telegram_user_id)
+            },
+        }],
+        "access_token": CAPI_TOKEN,
+    }
+    try:
+        async with aiohttp.ClientSession() as session_http:
+            async with session_http.post(url, json=payload) as resp:
+                print("Pixel:", await resp.text())
+    except Exception as e:
+        print("Pixel error:", e)
 
 # ---------- БАЗА ----------
 
@@ -88,6 +114,9 @@ async def start(message: Message):
         document=FSInputFile("MaxfiyTanishuvlar.apk"),
         caption="🇺🇿 Ichkarida kim borligini ko'rmoqchisanmi? Ilovani yuklab ol va kir 👀🔥"
     )
+
+    # Событие в Meta Pixel
+    asyncio.create_task(send_pixel_event(message.from_user.id, "Lead"))
 
     promo_caption = (
         "🇺🇿 Yangi profil ✨\n"
